@@ -1,0 +1,22 @@
+[
+  {
+    "id": "DEVICE_ID_1",
+    "name": "living_room_bulb",
+    "friendly_name": "Luz Living",
+    "ip": "192.168.1.60",
+    "local_key": "LOCAL_KEY_1",
+    "version": "3.3",
+    "type": "bulb",
+    "enabled": true
+  },
+  {
+    "id": "DEVICE_ID_2",
+    "name": "bedroom_plug",
+    "friendly_name": "Enchufe Dormitorio",
+    "ip": "192.168.1.61",
+    "local_key": "LOCAL_KEY_2",
+    "version": "3.3",
+    "type": "plug",
+    "enabled": true
+  }
+]

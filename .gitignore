@@ -1,0 +1,15 @@
+.env
+
+# Tuya — contiene local keys, nunca al repo
+config/tuya/devices.json
+
+# Govee — archivos de caché/runtime
+config/govee/*
+!config/govee/.gitkeep
+
+# eWeLink — archivos de caché/runtime
+config/ewelink/*
+!config/ewelink/.gitkeep
+
+*.log
+.DS_Store

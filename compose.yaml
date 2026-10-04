@@ -1,0 +1,69 @@
+# home-mqtt-bridges — compose.yaml
+#
+# Broker MQTT y Home Assistant son servicios EXTERNOS — no se incluyen aquí.
+#
+# Uso por perfil:
+#   docker compose --profile govee up -d
+#   docker compose --profile ewelink up -d
+#   docker compose --profile tuya up -d
+#   docker compose --profile govee --profile ewelink --profile tuya up -d
+#
+# O directamente: ./scripts/up.sh
+
+services:
+
+  # ── Govee ────────────────────────────────────────────────────────────────
+  govee2mqtt:
+    image: ghcr.io/wez/govee2mqtt:latest
+    container_name: govee2mqtt
+    profiles: [govee]
+    restart: unless-stopped
+    network_mode: host          # requerido para LAN discovery (multicast/UDP)
+    environment:
+      TZ: ${TZ:-America/Santiago}
+      GOVEE_EMAIL: ${GOVEE_EMAIL}
+      GOVEE_PASSWORD: ${GOVEE_PASSWORD}
+      GOVEE_API_KEY: ${GOVEE_API_KEY:-}
+      # govee2mqtt usa prefijo GOVEE_MQTT_* — mapeado desde las vars comunes MQTT_*
+      GOVEE_MQTT_HOST: ${MQTT_HOST}
+      GOVEE_MQTT_PORT: ${MQTT_PORT:-1883}
+      GOVEE_MQTT_USER: ${MQTT_USERNAME}
+      GOVEE_MQTT_PASSWORD: ${MQTT_PASSWORD}
+    healthcheck:
+      test: ["CMD", "pgrep", "-x", "govee2mqtt"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # ── Sonoff / eWeLink ─────────────────────────────────────────────────────
+  ewelink-mqtt:
+    build: ./containers/ewelink
+    container_name: ewelink-mqtt
+    profiles: [ewelink]
+    restart: unless-stopped
+    network_mode: host          # requerido para mDNS/Zeroconf (descubrimiento LAN)
+    environment:
+      TZ: ${TZ:-America/Santiago}
+      EWELINK_EMAIL: ${EWELINK_EMAIL}
+      EWELINK_PASSWORD: ${EWELINK_PASSWORD}
+      MQTT_HOST: ${MQTT_HOST}
+      MQTT_PORT: ${MQTT_PORT:-1883}
+      MQTT_USERNAME: ${MQTT_USERNAME}
+      MQTT_PASSWORD: ${MQTT_PASSWORD}
+
+  # ── Tuya / Nexxt (control LAN directo) ───────────────────────────────────
+  tuya-mqtt:
+    build: ./containers/tuya
+    container_name: tuya-mqtt
+    profiles: [tuya]
+    restart: unless-stopped
+    network_mode: host          # requerido para TCP directo a dispositivos Tuya LAN
+    environment:
+      TZ: ${TZ:-America/Santiago}
+      MQTT_HOST: ${MQTT_HOST}
+      MQTT_PORT: ${MQTT_PORT:-1883}
+      MQTT_USERNAME: ${MQTT_USERNAME}
+      MQTT_PASSWORD: ${MQTT_PASSWORD}
+    volumes:
+      - ./config/tuya/devices.json:/app/devices.conf:ro
