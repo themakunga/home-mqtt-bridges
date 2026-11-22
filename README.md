@@ -1,5 +1,9 @@
 # home-mqtt-bridges
 
+![MQTT](https://img.shields.io/badge/MQTT-660066?style=flat-square&logo=mqtt&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
+
 Bridges MQTT para domótica — conecta dispositivos Govee, Sonoff y Tuya/Nexxt
 a un broker MQTT externo (Mosquitto) y Home Assistant.
 
